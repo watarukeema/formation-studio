@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Formation Studio</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="title">Formation Studio</div>
+      <p class="subtitle">
+        <strong>Sidebar:</strong> keyframes &amp; setup (use <strong>‹</strong> to collapse). <strong>Main:</strong> dance + timeline | formation stage.
+        Dots scale with grid density (fewer cells → larger circles). <strong>Hold</strong> vs <strong>Morph</strong> between keyframes.
+      </p>
+    </header>
+
+    <div class="layout layout--studio" id="layoutStudio">
+      <div class="sidebarShell">
+        <button
+          type="button"
+          id="sidebarToggle"
+          class="sidebarToggle"
+          aria-expanded="true"
+          aria-controls="sidebarContent"
+          title="Collapse sidebar"
+        >
+          ‹
+        </button>
+        <aside class="panel panel--sidebar" id="sidebarContent" aria-label="Keyframes and setup">
+          <div class="sidebarInner">
+          <div class="card card--sidebar">
+            <h2>Keyframes</h2>
+            <details class="detailsPanel">
+              <summary>Export, import, clear</summary>
+              <div class="detailsPanelBody">
+                <div class="row row--tight">
+                  <button id="exportBtn" type="button">Export JSON</button>
+                  <label class="fileBtn fileBtn--small">
+                    <input id="importFile" type="file" accept=".json,application/json,text/json,text/plain" class="sr-only" />
+                    <span>Import</span>
+                  </label>
+                </div>
+                <button id="clearAllBtn" type="button" class="btnDangerText btnBlock">Clear all keyframes</button>
+              </div>
+            </details>
+            <div id="keyframeList" class="keyframeList keyframeList--sidebar"></div>
+          </div>
+
+          <div class="card card--sidebar">
+            <h2>Stage setup</h2>
+            <div class="formGrid formGrid--sidebar">
+              <div class="gridAxesRow" title="Stage is square; columns and rows set how many cells along each edge (3–10 each).">
+                <label class="field">
+                  Columns
+                  <input id="gridColsInput" type="number" min="3" max="10" step="1" value="10" />
+                </label>
+                <label class="field">
+                  Rows
+                  <input id="gridRowsInput" type="number" min="3" max="10" step="1" value="10" />
+                </label>
+              </div>
+              <label class="field">
+                Dancers
+                <input id="dancersInput" type="number" min="1" max="24" step="1" value="8" />
+              </label>
+            </div>
+            <label class="checkbox sidebarCheck">
+              <input id="editModeInput" type="checkbox" />
+              Allow drag on stage
+            </label>
+            <p class="help muted help--tiny">
+              With edit on: <kbd>↑↓←→</kbd> nudge selected dot (hold <kbd>Shift</kbd> for bigger steps).
+              <kbd>Ctrl</kbd>+<kbd>Z</kbd> / <kbd>⌘</kbd>+<kbd>Z</kbd> undo last drag or nudge.
+            </p>
+            <h3 class="h3sidebar">Dancer names</h3>
+            <p class="help muted help--tiny">Defaults <strong>1, 2, 3…</strong> on the stage; customize here. Included in <strong>Export JSON</strong>.</p>
+            <div id="dancerNamesContainer" class="dancerNames"></div>
+          </div>
+          </div>
+        </aside>
+      </div>
+
+      <div class="mainSplit">
+        <section class="panel panel--media" aria-label="Dance video and timeline">
+          <div class="card">
+            <h2>Media</h2>
+            <input id="mediaFile" type="file" accept="video/*,audio/*" />
+            <p class="help muted help--tiny"><kbd>Space</kbd> play/pause when not typing.</p>
+          </div>
+
+          <div class="card card--editor">
+            <div class="editorHead">
+              <h2>Preview &amp; timeline</h2>
+              <div id="status" class="status status--editor"></div>
+            </div>
+
+            <div class="editorViewport" aria-label="Media preview">
+              <video id="videoPlayer" playsinline></video>
+              <audio id="audioPlayer"></audio>
+            </div>
+
+            <div class="editorTimeStrip">
+              <div class="timelineMeta">
+                <div id="timelineSecLabel" class="bigMono">Formation time 0.00s</div>
+                <div id="timeLabel" class="mono">Media 0.00s</div>
+              </div>
+              <input id="timeSlider" class="editorScrubber" type="range" min="0" max="60" step="0.01" value="0" />
+            </div>
+
+            <div class="editorTransport">
+              <div class="editorTransportMain">
+                <button id="playBtn" type="button" title="Play">Play</button>
+                <button id="pauseBtn" type="button" title="Pause">Pause</button>
+                <button id="restartBtn" type="button" title="Jump to formation 0s">⟲ 0s</button>
+              </div>
+              <div class="editorNudge">
+                <button id="stepBack4Btn" type="button">−4s</button>
+                <button id="stepBackBtn" type="button">−1s</button>
+                <button id="stepFwdBtn" type="button">+1s</button>
+                <button id="stepFwd4Btn" type="button">+4s</button>
+              </div>
+            </div>
+
+            <div class="editorSync formGrid">
+              <label class="field">
+                Offset (media → formation 0)
+                <input id="offsetInput" type="number" min="0" max="99999" step="0.01" value="0" />
+              </label>
+              <div class="field">
+                <span class="fieldLabel">Align</span>
+                <button id="setOffsetNowBtn" type="button">Set offset to playhead</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel panel--stage" aria-label="Formation stage">
+          <div class="card card--stageMain">
+            <h2>Stage</h2>
+            <div class="row row--gap">
+              <button id="saveKeyframeBtn" type="button" class="btnPrimary">Save keyframe here</button>
+            </div>
+            <p class="help muted help--tiny">
+              Uncheck <strong>Morph → next</strong> to hold a pose until the next keyframe; check it to transition into the next pose.
+            </p>
+            <div class="stageWrap stageWrap--main">
+              <div class="stageContainer">
+                <canvas id="stage" width="700" height="700"></canvas>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <script type="module" src="./js/main.js"></script>
+  </body>
+</html>
