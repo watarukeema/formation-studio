@@ -2,7 +2,7 @@
 
 Plan dance formations on a **grid stage** while scrubbing **video or audio**. Save positions as **keyframes** in formation time (seconds from a configurable offset), choose **hold** or **morph** into the next shape, and export everything as **JSON** for backup or sharing.
 
-Serve the folder locally (see **Run locally** below) or deploy the same static files to [GitHub Pages](https://pages.github.com/) for a public demo URL.
+Serve the folder locally (see **Run locally** below) or [Live demo](https://watarukeema.github.io/formation-studio/).
 
 ---
 
